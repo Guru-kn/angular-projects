@@ -7,10 +7,18 @@ import {CommonModule} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {provideHttpClient} from "@angular/common/http";
 import {AppComponent} from "./app/app.component";
+import {AuthButtonComponent} from "./auth/auth.component";
+import {AuthGuard, AuthModule, provideAuth0} from "@auth0/auth0-angular";
+import {AUTH0_CONFIG, AuthConfigService} from "./auth/auth.service";
+import {environment} from "./environment";
+import {AuthCallbackComponent} from "./callback/callback.component";
+import {LoginButtonComponent} from "./app/login-button/login-button.component";
+import {LogoutButtonComponent} from "./app/logout-button/logout-button.component";
 
 const routes: Routes = [
-  {path: "", redirectTo: "home", pathMatch: "full"},
-  {path: "", redirectTo: "home", pathMatch: "full"}
+  {path: "", component: AuthButtonComponent, pathMatch: "full"},
+  {path: "home", component: HomeComponent, pathMatch: "full",canActivate: [AuthGuard]},
+  {path: "callback", component: AuthCallbackComponent, pathMatch: "full"},
 ]
 
 @NgModule({
@@ -20,19 +28,42 @@ const routes: Routes = [
     BrowserAnimationsModule,
     CommonModule,
     ReactiveFormsModule,
+    AuthModule.forRoot({
+      domain: environment.auth.domain,
+      clientId: environment.auth.clientId,
+      authorizationParams: {
+        redirect_uri: environment.auth.redirectUri
+      }
+    })
   ],
   exports: [
     HomeComponent
   ],
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    AuthButtonComponent,
+    AuthCallbackComponent,
+    LoginButtonComponent,
+    LogoutButtonComponent
   ],
   providers: [
-    provideHttpClient()
+    provideHttpClient(),
+    {
+      provide: AUTH0_CONFIG,
+      useValue: {
+        domain: environment.auth.domain,
+        clientId: environment.auth.clientId,
+        authorizationParams: {
+          redirect_uri: environment.auth.redirectUri
+        }
+      }
+    },
+    AuthConfigService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent]
 })
 
-export class AppModule {}
+export class AppModule {
+}
