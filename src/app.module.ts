@@ -14,11 +14,13 @@ import {environment} from "./environment";
 import {AuthCallbackComponent} from "./callback/callback.component";
 import {LoginButtonComponent} from "./app/login-button/login-button.component";
 import {LogoutButtonComponent} from "./app/logout-button/logout-button.component";
+import {LogoutCompleteComponent} from "./app/logout-complete/logout-complete.component";
 
 const routes: Routes = [
   {path: "", component: AuthButtonComponent, pathMatch: "full"},
   {path: "home", component: HomeComponent, pathMatch: "full",canActivate: [AuthGuard]},
   {path: "callback", component: AuthCallbackComponent, pathMatch: "full"},
+  {path: "logged-out", component: LogoutCompleteComponent, pathMatch: "full"},
 ]
 
 @NgModule({
@@ -45,7 +47,8 @@ const routes: Routes = [
     AuthButtonComponent,
     AuthCallbackComponent,
     LoginButtonComponent,
-    LogoutButtonComponent
+    LogoutButtonComponent,
+    LogoutCompleteComponent
   ],
   providers: [
     provideHttpClient(),
